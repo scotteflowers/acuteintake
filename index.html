@@ -742,11 +742,33 @@ footer a { color: var(--blue-mid); text-decoration: none; }
   </div>
 
   <div class="card">
-    <h3>How and when did the symptoms begin?</h3>
-    <p class="hint">Sudden or gradual? After any particular event, exposure, emotion, or change?</p>
-    <textarea id="onset" rows="2" placeholder="e.g. Began suddenly after getting caught in rain, or after a shock or fright…"></textarea>
+    <h3>How quickly did your symptoms come on?</h3>
+    <div class="chip-group" data-key="onset_speed">
+      <span class="chip" data-val="Gradually over several days">Gradually over several days</span>
+      <span class="chip" data-val="Developed over a day or two">Developed over a day or two</span>
+      <span class="chip" data-val="Came on within hours">Came on within hours</span>
+      <span class="chip" data-val="Struck suddenly / almost instantly">Struck suddenly / almost instantly</span>
+      <span class="chip skip-chip" onclick="toggleSkipChip('onset_speed', this)">Not sure / skip</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Describe the event that occurred just before the symptom(s) started.</h3>
+    <p class="hint">This applies if you can recall a particular event, exposure, emotion, or change.</p>
+    <textarea id="onset" rows="2" placeholder="e.g. Got caught in cold rain, had a shock or fright, was exposed to a cold wind…"></textarea>
     <div class="chip-group" style="margin-top:10px">
       <span class="chip skip-chip" onclick="toggleSkipText('onset', this)">Not sure / skip</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>How much are your symptoms affecting your ability to function?</h3>
+    <div class="chip-group" data-key="functional_impact">
+      <span class="chip" data-val="Minimal — I can carry on mostly as normal">Minimal — I can carry on mostly as normal</span>
+      <span class="chip" data-val="Mild — I'm slower but managing">Mild — I'm slower but managing</span>
+      <span class="chip" data-val="Moderate — I've had to stop most normal activities">Moderate — I've had to stop most normal activities</span>
+      <span class="chip" data-val="Significant — I'm basically in bed / unable to function">Significant — I'm basically in bed / unable to function</span>
+      <span class="chip skip-chip" onclick="toggleSkipChip('functional_impact', this)">Not sure / skip</span>
     </div>
   </div>
 
@@ -1216,7 +1238,9 @@ function buildLines() {
 
   add('Severity', v + ' / 10 — ' + sevData[v][0]);
   add('Physical symptoms', tval('physical'));
-  add('Onset', tval('onset'));
+  add('Onset speed', getVal('onset_speed'));
+  add('Onset event', tval('onset'));
+  add('Functional impact', getVal('functional_impact'));
   add('Better / worse from', tval('modalities'));
   add('Emotional state', tval('emotional'));
   add('Energy', getVal('energy'));
@@ -1361,7 +1385,7 @@ function loadFromFile(input) {
     // Map of label → field id for textareas
     const textMap = {
       'Physical symptoms': 'physical',
-      'Onset': 'onset',
+      'Onset event': 'onset',
       'Better / worse from': 'modalities',
       'Emotional state': 'emotional',
       'Cravings / aversions': 'cravings',
@@ -1370,6 +1394,8 @@ function loadFromFile(input) {
 
     // Map of label → chip group data-key
     const chipMap = {
+      'Onset speed': 'onset_speed',
+      'Functional impact': 'functional_impact',
       'Energy': 'energy',
       'Social preference': 'social',
       'Appetite': 'appetite',
