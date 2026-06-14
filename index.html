@@ -574,6 +574,24 @@ input[type="range"]::-moz-range-thumb {
   margin-bottom: 1.5rem;
   line-height: 1.5;
 }
+.match-section {
+  margin: 1.5rem 0 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.match-section .card {
+  margin: 0;
+}
+.match-section .card h3 {
+  margin-bottom: 0.5rem;
+}
+#second-choice-card {
+  display: none;
+}
+#second-choice-card.visible {
+  display: block;
+}
 .action-divider {
   font-size: 11px;
   font-weight: 600;
@@ -742,33 +760,11 @@ footer a { color: var(--blue-mid); text-decoration: none; }
   </div>
 
   <div class="card">
-    <h3>How quickly did your symptoms come on?</h3>
-    <div class="chip-group" data-key="onset_speed">
-      <span class="chip" data-val="Gradually over several days">Gradually over several days</span>
-      <span class="chip" data-val="Developed over a day or two">Developed over a day or two</span>
-      <span class="chip" data-val="Came on within hours">Came on within hours</span>
-      <span class="chip" data-val="Struck suddenly / almost instantly">Struck suddenly / almost instantly</span>
-      <span class="chip skip-chip" onclick="toggleSkipChip('onset_speed', this)">Not sure / skip</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Describe the event that occurred just before the symptom(s) started.</h3>
-    <p class="hint">This applies if you can recall a particular event, exposure, emotion, or change.</p>
-    <textarea id="onset" rows="2" placeholder="e.g. Got caught in cold rain, had a shock or fright, was exposed to a cold wind…"></textarea>
+    <h3>How and when did the symptoms begin?</h3>
+    <p class="hint">Sudden or gradual? After any particular event, exposure, emotion, or change?</p>
+    <textarea id="onset" rows="2" placeholder="e.g. Began suddenly after getting caught in rain, or after a shock or fright…"></textarea>
     <div class="chip-group" style="margin-top:10px">
       <span class="chip skip-chip" onclick="toggleSkipText('onset', this)">Not sure / skip</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>How much are your symptoms affecting your ability to function?</h3>
-    <div class="chip-group" data-key="functional_impact">
-      <span class="chip" data-val="Minimal — I can carry on mostly as normal">Minimal — I can carry on mostly as normal</span>
-      <span class="chip" data-val="Mild — I'm slower but managing">Mild — I'm slower but managing</span>
-      <span class="chip" data-val="Moderate — I've had to stop most normal activities">Moderate — I've had to stop most normal activities</span>
-      <span class="chip" data-val="Significant — I'm basically in bed / unable to function">Significant — I'm basically in bed / unable to function</span>
-      <span class="chip skip-chip" onclick="toggleSkipChip('functional_impact', this)">Not sure / skip</span>
     </div>
   </div>
 
@@ -1049,7 +1045,33 @@ footer a { color: var(--blue-mid); text-decoration: none; }
   </button>
   <p class="claude-note">Opens Grok (xAI) in a new tab with your full symptom picture pre-loaded — then click the ↑ arrow to find your best-matching frequency.</p>
 
-  <div class="action-divider">Other options</div>
+  <div class="action-divider">Your frequency match</div>
+  <p style="font-size:13px;color:var(--text-muted);text-align:center;margin:0.5rem 0 1rem;line-height:1.55;">After studying the information about your symptom picture in one or more of the AI engines above, come back here and complete the rest of the intake.</p>
+
+  <div class="match-section">
+    <div class="card">
+      <h3>Homeopathic frequency that most closely matches my symptom picture</h3>
+      <input type="text" id="freq-match" placeholder="e.g. Aconitum napellus, Belladonna, Gelsemium…" autocomplete="off">
+    </div>
+
+    <div class="card">
+      <h3>How strong of a match do you feel this is?</h3>
+      <div class="chip-group" data-key="match_strength">
+        <span class="chip" data-val="Very Strong Match" onclick="handleMatchStrength(this)">Very Strong Match</span>
+        <span class="chip" data-val="Strong Match" onclick="handleMatchStrength(this)">Strong Match</span>
+        <span class="chip" data-val="A Match with a Close Second" onclick="handleMatchStrength(this)">A Match with a Close Second</span>
+      </div>
+    </div>
+
+    <div class="card" id="second-choice-card">
+      <h3>Second choice frequency</h3>
+      <p class="hint">If you identified a close second, enter it here.</p>
+      <input type="text" id="freq-second" placeholder="e.g. Rhus toxicodendron, Pulsatilla…" autocomplete="off">
+    </div>
+  </div>
+
+  <div class="action-divider">Submit to your practitioner</div>
+  <p style="font-size:13px;color:var(--text-muted);text-align:center;margin:0.5rem 0 1rem;line-height:1.55;">Send your completed Acute Symptom Intake to your practitioner so they can prepare your homeopathic frequency schedule. Use <strong>Copy Summary</strong> and paste into an email, or <strong>Download as a text file</strong> and attach it to your email. You may also want to save a <strong>PDF</strong> for your own records.</p>
 
   <div class="action-grid">
     <button class="btn-action btn-copy" onclick="copySummary()">
@@ -1238,9 +1260,7 @@ function buildLines() {
 
   add('Severity', v + ' / 10 — ' + sevData[v][0]);
   add('Physical symptoms', tval('physical'));
-  add('Onset speed', getVal('onset_speed'));
-  add('Onset event', tval('onset'));
-  add('Functional impact', getVal('functional_impact'));
+  add('Onset', tval('onset'));
   add('Better / worse from', tval('modalities'));
   add('Emotional state', tval('emotional'));
   add('Energy', getVal('energy'));
@@ -1258,6 +1278,11 @@ function buildLines() {
   add('Clothing / covering', getVal('clothing'));
   add('Perspiration', getVal('sweat'));
   add('Other observations', tval('other'));
+  const freqMatch = document.getElementById('freq-match') ? document.getElementById('freq-match').value.trim() : '';
+  const freqSecond = document.getElementById('freq-second') ? document.getElementById('freq-second').value.trim() : '';
+  if (freqMatch) add('Frequency match (user selected)', freqMatch);
+  if (getVal('match_strength')) add('Match confidence', getVal('match_strength'));
+  if (freqSecond) add('Second choice frequency', freqSecond);
   return lines;
 }
 
@@ -1274,6 +1299,24 @@ function buildText() {
   const lines = buildLines();
   const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   return 'ACUTE SYMPTOMS INTAKE\nDate: ' + date + '\n\n' + lines.map(l => l.label + ': ' + l.val).join('\n');
+}
+
+/* ── Frequency match strength ─────────────────── */
+function handleMatchStrength(chip) {
+  // Standard chip selection (toggle active, store in sel)
+  const group = chip.closest('.chip-group');
+  const key = group.dataset.key;
+  group.querySelectorAll('.chip:not(.skip-chip)').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  sel[key] = chip.dataset.val;
+  // Show/hide second choice card
+  const card = document.getElementById('second-choice-card');
+  if (chip.dataset.val === 'A Match with a Close Second') {
+    card.classList.add('visible');
+  } else {
+    card.classList.remove('visible');
+    document.getElementById('freq-second').value = '';
+  }
 }
 
 /* ── Actions ──────────────────────────────────── */
@@ -1385,7 +1428,7 @@ function loadFromFile(input) {
     // Map of label → field id for textareas
     const textMap = {
       'Physical symptoms': 'physical',
-      'Onset event': 'onset',
+      'Onset': 'onset',
       'Better / worse from': 'modalities',
       'Emotional state': 'emotional',
       'Cravings / aversions': 'cravings',
@@ -1394,8 +1437,6 @@ function loadFromFile(input) {
 
     // Map of label → chip group data-key
     const chipMap = {
-      'Onset speed': 'onset_speed',
-      'Functional impact': 'functional_impact',
       'Energy': 'energy',
       'Social preference': 'social',
       'Appetite': 'appetite',
