@@ -531,24 +531,6 @@ input[type="range"]::-moz-range-thumb {
 }
 .btn-duck:hover { box-shadow: 0 6px 28px rgba(192,68,15,0.5); transform: translateY(-1px); }
 .btn-duck:active { transform: scale(0.99); }
-.btn-chatgpt {
-  width: 100%;
-  justify-content: center;
-  background: linear-gradient(135deg, #19c37d 0%, #0fa36b 100%);
-  border: none;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 600;
-  padding: 16px 24px;
-  border-radius: var(--radius);
-  box-shadow: 0 4px 20px rgba(15,163,107,0.3);
-  letter-spacing: 0.01em;
-  margin-bottom: 0.5rem;
-  margin-top: 0.75rem;
-  transition: box-shadow 0.15s, transform 0.1s;
-}
-.btn-chatgpt:hover { box-shadow: 0 6px 28px rgba(15,163,107,0.45); transform: translateY(-1px); }
-.btn-chatgpt:active { transform: scale(0.99); }
 .claude-note {
   font-size: 12px;
   color: var(--text-muted);
@@ -1015,14 +997,8 @@ footer a { color: var(--blue-mid); text-decoration: none; }
   </button>
   <p class="claude-note">No account or login needed — opens Duck.ai in a new tab with your full symptom picture pre-loaded, using Claude. Then click the ↑ arrow to search.</p>
 
-  <button class="btn-action btn-chatgpt" onclick="askChatGPT()">
-    <svg class="icon" style="width:20px;height:20px;" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M22.28 9.28a5.998 5.998 0 0 0-.52-4.93 6.07 6.07 0 0 0-6.53-2.91A6.01 6.01 0 0 0 10.7 0a6.07 6.07 0 0 0-5.78 4.2 6.01 6.01 0 0 0-4.01 2.9 6.07 6.07 0 0 0 .75 7.12 5.998 5.998 0 0 0 .52 4.93 6.07 6.07 0 0 0 6.53 2.91A6.01 6.01 0 0 0 13.3 24a6.07 6.07 0 0 0 5.79-4.2 6.01 6.01 0 0 0 4-2.9 6.07 6.07 0 0 0-.75-7.12zm-9 12.44a4.49 4.49 0 0 1-2.88-1.04l.14-.08 4.78-2.76a.78.78 0 0 0 .39-.68v-6.73l2.02 1.17a.07.07 0 0 1 .04.05v5.58a4.51 4.51 0 0 1-4.49 4.49zm-9.63-4.13a4.49 4.49 0 0 1-.54-3.01l.14.09 4.78 2.76a.77.77 0 0 0 .78 0l5.83-3.37v2.34a.07.07 0 0 1-.03.06L9.1 19.16a4.51 4.51 0 0 1-5.44-1.57zm-1.25-9.88a4.49 4.49 0 0 1 2.34-1.98v5.68a.77.77 0 0 0 .39.67l5.83 3.37-2.02 1.17a.07.07 0 0 1-.07 0L4.2 13.4a4.51 4.51 0 0 1-.8-5.69zm16.59 3.86L13.16 8.2l2.02-1.16a.07.07 0 0 1 .07 0l4.78 2.76a4.5 4.5 0 0 1-.7 8.12v-5.68a.77.77 0 0 0-.38-.67zm2.01-3.02-.14-.09-4.77-2.77a.78.78 0 0 0-.79 0L9.47 9.07V6.73a.07.07 0 0 1 .03-.06l4.77-2.75a4.5 4.5 0 0 1 6.68 4.66zm-12.64 4.16-2.02-1.16a.07.07 0 0 1-.04-.06V5.97a4.5 4.5 0 0 1 7.38-3.45l-.14.08-4.78 2.76a.78.78 0 0 0-.39.68zm1.1-2.36 2.6-1.5 2.6 1.5v2.98l-2.6 1.5-2.6-1.5z"/></svg>
-    Find my best-matching frequency in ChatGPT
-  </button>
-  <p class="claude-note">No account or login needed — opens ChatGPT in a new tab with your full symptom picture pre-loaded. Then click the ↑ arrow to search.</p>
-
   <div class="action-divider">Your frequency match</div>
-  <p style="font-size:13px;color:var(--text-muted);text-align:center;margin:0.5rem 0 1rem;line-height:1.55;">After studying the information about your symptom picture in one or more of the AI engines above, come back here and complete the rest of the intake.</p>
+  <p style="font-size:13px;color:var(--text-muted);text-align:center;margin:0.5rem 0 1rem;line-height:1.55;">After studying the information about your symptom picture in Duck.ai, come back here and complete the rest of the intake.</p>
 
   <div class="match-section">
     <div class="card">
@@ -1337,19 +1313,6 @@ function askDuck() {
     lines.map(l => l.label + ': ' + l.val).join('\n') +
     '\n\n(Click the up arrow button to begin the search for the best frequency.)';
   const url = 'https://duck.ai/?q=' + encodeURIComponent(prompt) + '&model=claude';
-  window.open(url, '_blank');
-}
-
-function askChatGPT() {
-  const lines = buildLines();
-  if (!lines.length) { showToast('Please complete the intake first'); return; }
-  const prompt =
-    'I have completed an acute illness symptom intake. Based on the following symptom picture, ' +
-    'please identify the most suitable homeopathic frequency or frequencies, explain the key features that ' +
-    'point to each one, and indicate which you would consider first and why.\n\n' +
-    lines.map(l => l.label + ': ' + l.val).join('\n') +
-    '\n\n(Click the up arrow button to begin the search for the best frequency.)';
-  const url = 'https://chatgpt.com/?q=' + encodeURIComponent(prompt);
   window.open(url, '_blank');
 }
 
