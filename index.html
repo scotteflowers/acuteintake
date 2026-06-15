@@ -254,13 +254,13 @@ textarea:disabled {
   cursor: not-allowed;
 }
 
-/* ── Patient details grid ─────────────────────────── */
-.patient-grid {
+/* ── Client details grid ─────────────────────────── */
+.client-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
 }
-.patient-grid .field-full {
+.client-grid .field-full {
   grid-column: 1 / -1;
 }
 .field-group label {
@@ -682,8 +682,8 @@ footer a { color: var(--blue-mid); text-decoration: none; }
   </div>
 
   <div class="card">
-    <div class="card-label">Patient Details</div>
-    <div class="patient-grid">
+    <div class="card-label">Client Details</div>
+    <div class="client-grid">
       <div class="field-group">
         <label for="first_name">First Name</label>
         <input type="text" id="first_name" placeholder="e.g. Jane">
@@ -1203,7 +1203,7 @@ function buildLines() {
   const lines = [];
   const add = (label, val) => { if (val && String(val).length > 0) lines.push({ label, val }); };
 
-  // Patient details
+  // Client details
   const firstName = document.getElementById('first_name').value.trim();
   const lastName  = document.getElementById('last_name').value.trim();
   const fullName  = [firstName, lastName].filter(Boolean).join(' ');
@@ -1394,7 +1394,7 @@ function loadFromFile(input) {
       }
     }
 
-    // Restore patient details
+    // Restore client details
     if (data['Name']) {
       const parts = data['Name'].split(' ');
       document.getElementById('first_name').value = parts[0] || '';
