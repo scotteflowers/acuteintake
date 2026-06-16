@@ -505,6 +505,13 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 3px 12px rgba(30,138,96,0.3);
 }
 .btn-save:hover { box-shadow: 0 5px 18px rgba(30,138,96,0.45); transform: translateY(-1px); }
+.btn-request {
+  background: linear-gradient(135deg, #5a3fa0 0%, #3d2880 100%);
+  border: none;
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(61,40,128,0.3);
+}
+.btn-request:hover { box-shadow: 0 5px 18px rgba(61,40,128,0.45); transform: translateY(-1px); }
 .btn-pdf {
   background: linear-gradient(135deg, #c0440f 0%, #9e3308 100%);
   border: none;
@@ -1030,16 +1037,12 @@ footer a { color: var(--blue-mid); text-decoration: none; }
   </div>
 
   <div class="action-divider">Submit to your practitioner</div>
-  <p style="font-size:13px;color:var(--text-muted);text-align:center;margin:0.5rem 0 1rem;line-height:1.55;">Send your completed Acute Symptom Intake to your practitioner so they can prepare your homeopathic frequency schedule. Use <strong>Copy Summary</strong> and paste into an email, or <strong>Download as a text file</strong> and attach it to your email. You may also want to save a <strong>PDF</strong> for your own records.</p>
+  <p style="font-size:13px;color:var(--text-muted);text-align:center;margin:0.5rem 0 1rem;line-height:1.55;"><strong>Request a Schedule</strong> will send your completed intake directly to your Innovibe practitioner by email. Your practitioner will review your symptom picture, create a personalised frequency schedule, and you will receive an email with full instructions. You may also want to save a <strong>PDF</strong> for your own records.</p>
 
-  <div class="action-grid">
-    <button class="btn-action btn-copy" onclick="copySummary()">
-      <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-      Copy summary
-    </button>
-    <button class="btn-action btn-save" onclick="saveSummary()">
-      <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Download text
+  <div class="action-grid" style="grid-template-columns:1fr 1fr;">
+    <button class="btn-action btn-request" onclick="requestSchedule()">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Request a schedule
     </button>
     <button class="btn-action btn-pdf" onclick="printSummary()">
       <svg class="icon" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
@@ -1322,13 +1325,14 @@ function askDuck() {
   window.open(url, '_blank');
 }
 
-function emailSummary() {
+function requestSchedule() {
   const lines = buildLines();
-  if (!lines.length) { showToast('Nothing to send yet'); return; }
+  if (!lines.length) { showToast('Please complete the intake first'); return; }
   const body = buildText();
-  const subject = encodeURIComponent('Acute Illness Intake');
+  const subject = encodeURIComponent('Acute Symptom Intake — Schedule Request');
   const bodyEncoded = encodeURIComponent(body);
   window.location.href = 'mailto:scott@innovibe.life?subject=' + subject + '&body=' + bodyEncoded;
+  showToast('Opening your email app… ✓');
 }
 
 function printSummary() {
