@@ -1172,6 +1172,26 @@ footer a { color: var(--blue-mid); text-decoration: none; }
 <div class="toast" id="toast"></div>
 
 <script>
+/* ══════════════════════════════════════════════════════
+   PRACTITIONER CONFIG
+   To add or edit practitioners, update this list only.
+   Each entry needs a unique code (used in the URL as ?p=code),
+   a display name, and an email address.
+   Example link: https://acuteintake.life/?p=scott
+   ══════════════════════════════════════════════════════ */
+const PRACTITIONERS = [
+  { code: 'scott',  name: 'Scott',   email: 'scott@innovibe.life' },
+  { code: 'kayla',  name: 'Kayla',   email: 'knf84@hotmail.com'  },
+  { code: 'amanda', name: 'Amanda',  email: 'amflowers@hotmail' },
+];
+
+/* Resolve practitioner from ?p= URL parameter */
+const PRACTITIONER = (() => {
+  const code = new URLSearchParams(window.location.search).get('p') || '';
+  return PRACTITIONERS.find(p => p.code.toLowerCase() === code.toLowerCase())
+    || { code: '', name: 'your practitioner', email: 'scott@innovibe.life' };
+})();
+
 const STEPS = 7;
 let current = 1;
 const sel = {};
@@ -1437,7 +1457,8 @@ function sendViaGmail() {
   const body = buildText();
   const subject = encodeURIComponent('Acute Symptom Intake — Schedule Request');
   const bodyEncoded = encodeURIComponent(body);
-  const url = 'https://mail.google.com/mail/?view=cm&to=scott%40innovibe.life&su=' + subject + '&body=' + bodyEncoded;
+  const to = encodeURIComponent(PRACTITIONER.email);
+  const url = 'https://mail.google.com/mail/?view=cm&to=' + to + '&su=' + subject + '&body=' + bodyEncoded;
   window.open(url, '_blank');
   closeEmailModal();
   showToast('Opening Gmail… ✓');
@@ -1447,7 +1468,7 @@ function sendViaMailto() {
   const body = buildText();
   const subject = encodeURIComponent('Acute Symptom Intake — Schedule Request');
   const bodyEncoded = encodeURIComponent(body);
-  window.location.href = 'mailto:scott@innovibe.life?subject=' + subject + '&body=' + bodyEncoded;
+  window.location.href = 'mailto:' + PRACTITIONER.email + '?subject=' + subject + '&body=' + bodyEncoded;
   closeEmailModal();
   showToast('Opening your email app… ✓');
 }
