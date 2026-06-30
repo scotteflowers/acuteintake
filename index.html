@@ -1074,19 +1074,19 @@ footer a { color: var(--blue-mid); text-decoration: none; }
   <div class="result-hero">
     <div class="card-label">Complete</div>
     <h2>Your symptom picture</h2>
-    <p>Everything you've shared is summarised below. Hit the button to copy your full symptom picture and open Use.ai — then paste it in to find the most suitable frequency and why.</p>
+    <p>Everything you've shared is summarised below. Hit the button to open Duck.ai with your full symptom picture pre-loaded — it will identify the most suitable frequency and explain why.</p>
   </div>
   <div id="summary-grid" class="summary-grid"></div>
 
   <!-- Primary CTAs -->
   <button class="btn-action btn-duck" onclick="askDuck()">
     <svg class="icon" style="width:20px;height:20px;" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/></svg>
-    Find my best-matching frequency in Use.ai
+    Find my best-matching frequency in Duck.ai
   </button>
-  <p class="claude-note">No account or login needed. Your symptom picture is copied automatically — Use.ai opens in a new tab, then just paste (Ctrl+V or Cmd+V) into the "Type a message…" box and hit send.</p>
+  <p class="claude-note">No account or login needed — opens Duck.ai in a new tab with your full symptom picture pre-loaded, using Claude. Then click the ↑ arrow to search.</p>
 
   <div class="action-divider">Your frequency match</div>
-  <p style="font-size:13px;color:var(--text-muted);text-align:center;margin:0.5rem 0 1rem;line-height:1.55;">After pasting your symptom picture into Use.ai and reviewing the suggestions, come back here and complete the rest of the intake.</p>
+  <p style="font-size:13px;color:var(--text-muted);text-align:center;margin:0.5rem 0 1rem;line-height:1.55;">After studying the information about your symptom picture in Duck.ai, come back here and complete the rest of the intake.</p>
 
   <div class="match-section">
     <div class="card">
@@ -1439,41 +1439,10 @@ function askDuck() {
     'I have completed an acute illness symptom intake. Based on the following symptom picture, ' +
     'please identify the most suitable homeopathic frequency or frequencies, explain the key features that ' +
     'point to each one, and indicate which you would consider first and why.\n\n' +
-    lines.map(l => l.label + ': ' + l.val).join('\n');
-
-  function openUseAi() {
-    window.open('https://use.ai/', '_blank');
-  }
-
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(prompt).then(() => {
-      showToast('Symptom picture copied — paste it into Use.ai ✓');
-      openUseAi();
-    }).catch(() => {
-      // Fallback if clipboard permission is blocked
-      const ta = document.createElement('textarea');
-      ta.value = prompt;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      showToast('Symptom picture copied — paste it into Use.ai ✓');
-      openUseAi();
-    });
-  } else {
-    const ta = document.createElement('textarea');
-    ta.value = prompt;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast('Symptom picture copied — paste it into Use.ai ✓');
-    openUseAi();
-  }
+    lines.map(l => l.label + ': ' + l.val).join('\n') +
+    '\n\n(Click the up arrow button to begin the search for the best frequency.)';
+  const url = 'https://duck.ai/?q=' + encodeURIComponent(prompt) + '&model=claude';
+  window.open(url, '_blank');
 }
 
 function requestSchedule() {
