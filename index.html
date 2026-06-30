@@ -1074,7 +1074,7 @@ footer a { color: var(--blue-mid); text-decoration: none; }
   <div class="result-hero">
     <div class="card-label">Complete</div>
     <h2>Your symptom picture</h2>
-    <p>Everything you've shared is summarised below. Hit the button to open Claude with your full symptom picture pre-loaded — it will identify the most suitable frequency and explain why.</p>
+    <p>Everything you've shared is summarised below. Hit the button to copy your full symptom picture and open Use.ai — then paste it in to find the most suitable frequency and why.</p>
   </div>
   <div id="summary-grid" class="summary-grid"></div>
 
@@ -1083,10 +1083,10 @@ footer a { color: var(--blue-mid); text-decoration: none; }
     <svg class="icon" style="width:20px;height:20px;" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/></svg>
     Find my best-matching frequency in Use.ai
   </button>
-  <p class="claude-note">No account or login needed — opens Use.ai in a new tab with your full symptom picture pre-loaded. Then click the ↑ arrow to search.</p>
+  <p class="claude-note">No account or login needed. Your symptom picture is copied automatically — Use.ai opens in a new tab, then just paste (Ctrl+V or Cmd+V) into the "Type a message…" box and hit send.</p>
 
   <div class="action-divider">Your frequency match</div>
-  <p style="font-size:13px;color:var(--text-muted);text-align:center;margin:0.5rem 0 1rem;line-height:1.55;">After studying the information about your symptom picture in Use.ai, come back here and complete the rest of the intake.</p>
+  <p style="font-size:13px;color:var(--text-muted);text-align:center;margin:0.5rem 0 1rem;line-height:1.55;">After pasting your symptom picture into Use.ai and reviewing the suggestions, come back here and complete the rest of the intake.</p>
 
   <div class="match-section">
     <div class="card">
@@ -1111,9 +1111,9 @@ footer a { color: var(--blue-mid); text-decoration: none; }
   </div>
 
   <div class="action-divider">Submit to your practitioner</div>
-  <p style="font-size:13px;color:var(--text-muted);text-align:center;margin:0.5rem 0 1rem;line-height:1.55;"><strong>Request a Schedule</strong> will send your completed intake directly to your Innovibe practitioner by email. Your practitioner will review your symptom picture, create a personalised frequency schedule, and you will receive an email with full instructions. You may also want to save a <strong>PDF</strong> for your own records.</p>
+  <p style="font-size:13px;color:var(--text-muted);text-align:center;margin:0.5rem 0 1rem;line-height:1.55;"><strong>Request a Schedule</strong> will send your completed intake directly to your Innovibe practitioner by email. Your practitioner will review your symptom picture, create a personalised frequency schedule, and you will receive an email with full instructions. You may also want to save a <strong>PDF</strong> for your own records, or <strong>download a text file</strong> so you can reload your intake later.</p>
 
-  <div class="action-grid" style="grid-template-columns:1fr 1fr;">
+  <div class="action-grid" style="grid-template-columns:1fr 1fr 1fr;">
     <button class="btn-action btn-request" onclick="requestSchedule()">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       Request a schedule
@@ -1121,6 +1121,10 @@ footer a { color: var(--blue-mid); text-decoration: none; }
     <button class="btn-action btn-pdf" onclick="printSummary()">
       <svg class="icon" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
       Save PDF
+    </button>
+    <button class="btn-action btn-save" onclick="saveSummary()">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download text
     </button>
   </div>
   <div style="background:linear-gradient(135deg,rgba(1,54,84,0.06) 0%,rgba(22,78,114,0.1) 100%);border:1px solid rgba(1,54,84,0.15);border-radius:var(--radius);padding:16px 20px;margin:1.25rem 0 0.75rem;text-align:center;">
@@ -1435,10 +1439,41 @@ function askDuck() {
     'I have completed an acute illness symptom intake. Based on the following symptom picture, ' +
     'please identify the most suitable homeopathic frequency or frequencies, explain the key features that ' +
     'point to each one, and indicate which you would consider first and why.\n\n' +
-    lines.map(l => l.label + ': ' + l.val).join('\n') +
-    '\n\n(Click the up arrow button to begin the search for the best frequency.)';
-  const url = 'https://use.ai/?q=' + encodeURIComponent(prompt);
-  window.open(url, '_blank');
+    lines.map(l => l.label + ': ' + l.val).join('\n');
+
+  function openUseAi() {
+    window.open('https://use.ai/', '_blank');
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(prompt).then(() => {
+      showToast('Symptom picture copied — paste it into Use.ai ✓');
+      openUseAi();
+    }).catch(() => {
+      // Fallback if clipboard permission is blocked
+      const ta = document.createElement('textarea');
+      ta.value = prompt;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Symptom picture copied — paste it into Use.ai ✓');
+      openUseAi();
+    });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = prompt;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Symptom picture copied — paste it into Use.ai ✓');
+    openUseAi();
+  }
 }
 
 function requestSchedule() {
