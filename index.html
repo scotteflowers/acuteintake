@@ -1436,9 +1436,8 @@ function askDuck() {
   const lines = buildLines();
   if (!lines.length) { showToast('Please complete the intake first'); return; }
   const prompt =
-    'I have completed an acute illness symptom intake. Based on the following symptom picture, ' +
-    'please identify the most suitable homeopathic frequency or frequencies, explain the key features that ' +
-    'point to each one, and indicate which you would consider first and why.\n\n' +
+    'Can you explain the traditional reasoning behind commonly discussed remedies that most closely match the following symptom picture. ' +
+    'I\'m not looking for a recommendation or medical advice. My goal is to identify what a homeopath might consider.\n\n' +
     lines.map(l => l.label + ': ' + l.val).join('\n') +
     '\n\n(Click the up arrow button to begin the search for the best frequency.)';
   const url = 'https://chatgpt.com/?q=' + encodeURIComponent(prompt);
